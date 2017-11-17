@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <assert.h>
 #include <string.h>
 
 #define internal static
@@ -11,24 +12,12 @@ same_string(const char *a, const char *b)
     return strcmp(a, b) == 0;
 }
 
-struct tokenizer
+internal char *
+get_token(int argc, char **argv, int *current_argument)
 {
-    char *buffer;
-    char *at;
-    int cursor;
-};
-
-struct token
-{
-    char *text;
-    int length;
-    int cursor;
-};
-
-struct token get_token()
-{
-    struct token token;
-    return token;
+    (*current_argument)++;
+    if ((*current_argument) >= argc) return NULL;
+    return argv[*current_argument];
 }
 
 struct key_event
@@ -43,6 +32,36 @@ synthesize_key_event(struct key_event *event)
 internal struct key_event
 parse_key_event(int argc, char **argv)
 {
+    struct key_event event;
+
+    char *token, *key, *mod, *action;
+    int current_argument = 0;
+
+    token = get_token(argc, argv, &current_argument);
+    assert(same_string(token, "-key"));
+
+    // @incomplete: lookup keycode
+    key = get_token(argc, argv, &current_argument);
+    if (!key) {
+    }
+
+    // @incomplete: optional argument
+    token = get_token(argc, argv, &current_argument);
+    if (same_string(token, "-mod")) {
+        mod = get_token(argc, argv, &current_argument);
+        // @incomplete: lookup flags
+    }
+
+    // @incomplete: validate action
+    token = get_token(argc, argv, &current_argument);
+    if (same_string(token, "-action")) {
+        action = get_token(argc, argv, &current_argument);
+        if (!action) {
+        }
+    }
+
+    printf("key = '%s', mod = '%s', action = '%s'\n", key, mod, action);
+    return event;
 }
 
 struct pointer_event
@@ -57,6 +76,8 @@ synthesize_pointer_event(struct pointer_event *event)
 internal struct pointer_event
 parse_pointer_event(int argc, char **argv)
 {
+    struct pointer_event event;
+    return event;
 }
 
 struct text_event
@@ -71,6 +92,8 @@ synthesize_text_event(struct text_event *event)
 internal struct text_event
 parse_text_event(int argc, char **argv)
 {
+    struct text_event event;
+    return event;
 }
 
 enum event_type
@@ -110,18 +133,19 @@ print_usage_and_exit(char *name)
 
 /* syntax draft:
  *
- * ./qes -key "a" -mod "shift, cmd" -action "press"
- * ./qes -key "a" -mod "shift, cmd" -action "release"
+ * ./qes -key "a" -mod "shift cmd" -action "press"
+ * ./qes -key "a" -mod "shift cmd" -action "release"
  *
  * ./qes -pointer "left" -action "press"
  * ./qes -pointer "left" -action "release"
  *
  * ./qes -text "some text to output"
-
+ *
  * absolute coordinates unless relative prefix: +, -
- * ./qes -pointer " 20, 20" -action "move"
- * ./qes -pointer "+20,+20" -action "move"
- * ./qes -pointer "-20,+20" -action "move"
+ * ./qes -pointer " 20  20" -action "move"
+ * ./qes -pointer "+20 +20" -action "move"
+ * ./qes -pointer "-20 +20" -action "move"
+ *
  * */
 
 internal struct event
