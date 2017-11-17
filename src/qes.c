@@ -32,23 +32,45 @@ internal struct key_event
 parse_key_event(int argc, char **argv)
 {
     struct key_event event;
-
     char *token, *key, *mod, *action;
-    int current_argument = 0;
+    int current_argument;
 
+    current_argument = 0;
     token = get_token(argc, argv, &current_argument);
     assert(same_string(token, "-key"));
 
     // @incomplete: lookup keycode
     key = get_token(argc, argv, &current_argument);
     if (!key) {
+        // @incomplete: print error and exit
     }
 
     // @incomplete: optional argument
     token = get_token(argc, argv, &current_argument);
     if (same_string(token, "-mod")) {
         mod = get_token(argc, argv, &current_argument);
-        // @incomplete: lookup flags
+        if (!mod) {
+            // @incomplete: print error and exit
+        }
+
+        while (*mod) {
+            int mod_length;
+            char *next_mod;
+
+            next_mod = strchr(mod, ' ');
+            if (next_mod) {
+                mod_length = next_mod - mod;
+                while (*next_mod == ' ') ++next_mod;
+            } else {
+                mod_length = strlen(mod);
+                next_mod = mod + mod_length;
+            }
+
+            // @incomplete: lookup flag for modifier
+            printf("mod: '%.*s'\n", mod_length, mod);
+
+            mod = next_mod;
+        }
     }
 
     // @incomplete: validate action
@@ -56,10 +78,10 @@ parse_key_event(int argc, char **argv)
     if (same_string(token, "-action")) {
         action = get_token(argc, argv, &current_argument);
         if (!action) {
+            // @incomplete: print error and exit
         }
     }
 
-    printf("key = '%s', mod = '%s', action = '%s'\n", key, mod, action);
     return event;
 }
 
