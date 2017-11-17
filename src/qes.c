@@ -15,8 +15,7 @@ same_string(const char *a, const char *b)
 internal char *
 get_token(int argc, char **argv, int *current_argument)
 {
-    (*current_argument)++;
-    if ((*current_argument) >= argc) return NULL;
+    if (++(*current_argument) >= argc) return NULL;
     return argv[*current_argument];
 }
 
