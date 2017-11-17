@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
@@ -21,6 +22,9 @@ get_token(int argc, char **argv, int *current_argument)
 
 struct key_event
 {
+    uint32_t keycode;
+    uint32_t flags;
+    bool pressed;
 };
 
 internal void
@@ -78,6 +82,14 @@ parse_key_event(int argc, char **argv)
     if (same_string(token, "-action")) {
         action = get_token(argc, argv, &current_argument);
         if (!action) {
+            // @incomplete: print error and exit
+        }
+
+        if (same_string(action, "press")) {
+            event.pressed = true;
+        } else if (same_string(action, "release")) {
+            event.pressed = false;
+        } else {
             // @incomplete: print error and exit
         }
     }
