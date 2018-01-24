@@ -3,5 +3,5 @@
 features:
 
  - [x] synthesize key-input (`qes -k "shift - a"`)
- - [ ] synthesize text-input
+ - [x] synthesize text-input (`qes -t "hello, worldシ"`)
  - [ ] synthesize pointer-input

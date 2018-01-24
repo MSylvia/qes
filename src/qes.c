@@ -48,7 +48,7 @@ synthesize_modifiers(struct hotkey *hotkey, bool pressed)
 }
 
 internal void
-synthesize_keypress(char *key_string)
+synthesize_key(char *key_string)
 {
     struct parser parser;
     parser_init(&parser, key_string);
@@ -62,13 +62,42 @@ synthesize_keypress(char *key_string)
     }
 }
 
+internal void
+synthesize_text(char *text)
+{
+    CFStringRef text_ref = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
+    CFIndex text_length = CFStringGetLength(text_ref);
+
+    CGEventRef de = CGEventCreateKeyboardEvent(NULL, 0, true);
+    CGEventRef ue = CGEventCreateKeyboardEvent(NULL, 0, false);
+
+    CGEventSetFlags(de, 0);
+    CGEventSetFlags(ue, 0);
+
+    UniChar c;
+    for(CFIndex i = 0; i < text_length; ++i)
+    {
+        c = CFStringGetCharacterAtIndex(text_ref, i);
+        CGEventKeyboardSetUnicodeString(de, 1, &c);
+        CGEventPost(kCGAnnotatedSessionEventTap, de);
+        usleep(1000);
+        CGEventKeyboardSetUnicodeString(ue, 1, &c);
+        CGEventPost(kCGAnnotatedSessionEventTap, ue);
+    }
+
+    CFRelease(ue);
+    CFRelease(de);
+    CFRelease(text_ref);
+}
+
 int main(int argc, char **argv)
 {
     int option;
-    const char *short_option = "vk:";
+    const char *short_option = "vk:t:";
     struct option long_option[] = {
         { "version", no_argument, NULL, 'v' },
         { "key", required_argument, NULL, 'k' },
+        { "text", required_argument, NULL, 't' },
         { NULL, 0, NULL, 0 }
     };
 
@@ -79,7 +108,10 @@ int main(int argc, char **argv)
             return true;
         } break;
         case 'k': {
-            synthesize_keypress(optarg);
+            synthesize_key(optarg);
+        } break;
+        case 't': {
+            synthesize_text(optarg);
         } break;
         }
     }
