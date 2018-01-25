@@ -3,7 +3,7 @@
 
 static const char *modifier_flags_str[] =
 {
-    "alt", "shift", "cmd", "ctrl" "fn",
+    "alt", "shift", "cmd", "ctrl", "fn",
 };
 
 static const char *literal_keycode_str[] =
