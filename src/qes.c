@@ -19,7 +19,7 @@
 
 internal unsigned major_version = 0;
 internal unsigned minor_version = 0;
-internal unsigned patch_version = 1;
+internal unsigned patch_version = 2;
 
 internal inline void
 create_and_post_keyevent(uint16_t key, bool pressed)
@@ -54,6 +54,9 @@ synthesize_key(char *key_string)
     parser_init(&parser, key_string);
     struct hotkey *hotkey = parse_keypress(&parser);
     if (hotkey) {
+        CGSetLocalEventsSuppressionInterval(0.0f);
+        CGEnableEventStateCombining(false);
+
         synthesize_modifiers(hotkey, true);
         create_and_post_keyevent(hotkey->key, true);
 
